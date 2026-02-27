@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NazCreative - GDBV 1 Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        :root { --accent: #eab308; --bg: #030304; --panel: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.08); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: #f8fafc; overflow-x: hidden; }
+        .studio-glass { background: var(--panel); backdrop-filter: blur(24px); border: 1px solid var(--border); }
+        .brand-text { background: linear-gradient(135deg, #ffffff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; }
+        .ratio-chip.active { background: var(--accent); color: #000; font-weight: 700; }
+        .viewport-container { transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); width: 100%; display: flex; align-items: center; justify-content: center; }
+        .ratio-1-1 { aspect-ratio: 1 / 1; max-width: 500px; }
+        .ratio-16-9 { aspect-ratio: 16 / 9; max-width: 700px; }
+        .ratio-9-16 { aspect-ratio: 9 / 16; max-height: 60vh; width: auto; }
+        #imageContainer img { width: 100%; height: 100%; object-fit: contain; border-radius: 24px; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .loader-ring { width: 40px; height: 40px; border: 3px solid rgba(234, 179, 8, 0.1); border-top: 3px solid var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .shimmer-btn { position: relative; overflow: hidden; }
+        .shimmer-btn::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent); transform: rotate(45deg); animation: shim 3s infinite; }
+        @keyframes shim { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col p-4 md:p-8">
+
+    <div class="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-yellow-500/10 blur-[100px] -z-10"></div>
+
+    <nav class="w-full max-w-6xl mx-auto flex justify-between items-center mb-12">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center font-black text-black shadow-[0_0_20px_rgba(234,179,8,0.4)]">N</div>
+            <span class="text-xl brand-text tracking-tighter">NazCreative</span>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-[9px] font-bold tracking-[0.3em] text-gray-500 uppercase px-3 py-1 border border-white/5 rounded-full">GDBV 1 Active</span>
+        </div>
+    </nav>
+
+    <main class="flex-1 w-full max-w-4xl mx-auto flex flex-col gap-8 pb-20">
+        <section id="outputWindow" class="viewport-container studio-glass rounded-[40px] relative overflow-hidden ratio-1-1 mx-auto">
+            <div id="placeholderUI" class="text-center opacity-30">
+                <div class="text-6xl mb-4">✨</div>
+                <h2 class="text-sm font-bold tracking-widest uppercase">Neural Viewport</h2>
+                <p class="text-[10px] mt-2 text-gray-400">GDBV 1 Engine Ready</p>
+            </div>
+            <div id="imageContainer" class="hidden w-full h-full p-4 md:p-8"></div>
+            
+            <div id="statusOverlay" class="absolute inset-0 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center hidden z-50">
+                <div class="loader-ring mb-4"></div>
+                <p class="text-[10px] font-bold tracking-[0.4em] text-yellow-500 uppercase">Synthesizing Flow</p>
+            </div>
+        </section>
+
+        <div id="actionToolbar" class="hidden flex justify-center gap-3">
+            <button onclick="downloadImg()" class="studio-glass px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all active:scale-95">Download Artwork</button>
+        </div>
+
+        <section class="studio-glass rounded-[32px] p-2">
+            <div class="flex flex-col md:flex-row gap-2">
+                <textarea id="promptInput" placeholder="Describe your creative vision..." class="flex-1 bg-transparent border-none py-4 px-6 text-sm focus:ring-0 outline-none resize-none h-16 md:h-auto"></textarea>
+                <div class="flex items-center p-2">
+                    <button id="genBtn" class="shimmer-btn bg-yellow-500 hover:bg-yellow-400 text-black px-10 h-12 rounded-2xl font-black text-xs uppercase tracking-widest transition-all active:scale-95 shadow-[0_0_30px_rgba(234,179,8,0.2)]">
+                        Synthesize
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <hr class="border-white/5 my-4">
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+            <div>
+                <h3 class="text-yellow-500 text-[10px] font-black uppercase tracking-[0.3em] mb-3">Project Status</h3>
+                <h2 class="text-2xl font-bold tracking-tight mb-4 italic">The Neural Evolution.</h2>
+                <p class="text-xs text-gray-400 leading-relaxed mb-4">
+                    NazCreative Studio is a high-performance generative interface designed for rapid visual synthesis. Currently running on the <strong>GDBV 1 (Nano Banana 1)</strong> architecture, the engine provides professional-grade image output with minimal latency.
+                </p>
+            </div>
+            <div class="studio-glass rounded-3xl p-6 border-yellow-500/20">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-[10px] font-black uppercase tracking-widest text-white">Roadmap: GDBV 2</h3>
+                    <span class="bg-yellow-500/10 text-yellow-500 text-[8px] font-bold px-2 py-1 rounded-md">COMING SOON</span>
+                </div>
+                <p class="text-[11px] text-gray-500 leading-relaxed">
+                    The upcoming <strong>GDBV 2</strong> upgrade will integrate the <strong>Nano Banana 2</strong> (Gemini 3 Flash) core, introducing compositional intelligence, multi-image structure blending, and enhanced text rendering.
+                </p>
+                <div class="mt-4 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                    <div class="h-full bg-yellow-500 w-3/4 animate-pulse"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="text-center py-8 opacity-40">
+        <p class="text-[9px] font-bold tracking-widest uppercase">&copy; 2026 NazCreative // Powered by NB-1 Core</p>
+    </footer>
+
+    <script>
+        // CORE INITIALIZATION
+        const API_KEY = "AIzaSyAIa19V1v0o3uIQY73GUT-ThW3ZAVCiiho";
+        
+        const genBtn = document.getElementById('genBtn');
+        const promptInput = document.getElementById('promptInput');
+        const imageContainer = document.getElementById('imageContainer');
+        const statusOverlay = document.getElementById('statusOverlay');
+        const placeholderUI = document.getElementById('placeholderUI');
+        const actionToolbar = document.getElementById('actionToolbar');
+
+        let currentImg = null;
+
+        async function synthesize() {
+            const prompt = promptInput.value.trim();
+            if(!prompt) return;
+
+            genBtn.disabled = true;
+            statusOverlay.classList.remove('hidden');
+
+            try {
+                // GDBV 1 Core (Nano Banana 1 / Gemini 1.5 Flash)
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `Professional studio artwork, highly detailed, 8k resolution: ${prompt}` }] }],
+                        generationConfig: { responseModalities: ["IMAGE"] }
+                    })
+                });
+
+                if(!response.ok) throw new Error("Synthesis Interrupted");
+
+                const data = await response.json();
+                const base64 = data.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+
+                if(base64) {
+                    currentImg = `data:image/png;base64,${base64}`;
+                    placeholderUI.classList.add('hidden');
+                    imageContainer.classList.remove('hidden');
+                    actionToolbar.classList.remove('hidden');
+                    imageContainer.innerHTML = `<img src="${currentImg}" class="animate-in fade-in duration-1000">`;
+                } else {
+                    alert("Synthesis Error: Engine returned no data.");
+                }
+            } catch (e) {
+                alert("Studio Error: " + e.message);
+            } finally {
+                genBtn.disabled = false;
+                statusOverlay.classList.add('hidden');
+            }
+        }
+
+        function downloadImg() {
+            if(!currentImg) return;
+            const a = document.createElement('a');
+            a.href = currentImg;
+            a.download = `NazCreative_GDBV1_${Date.now()}.png`;
+            a.click();
+        }
+
+        genBtn.addEventListener('click', synthesize);
+    </script>
+</body>
+</html>
